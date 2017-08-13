@@ -1,123 +1,69 @@
 package util;
 
-
 import java.io.*;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import naivebayes.TrainningSet;
 
-import naiveBayes.Vector;
+import naivebayes.Vector;
 
 public class Utils {
-	
-	private static final String PUNCTUATION_REGEX = "[!\"#$%&'()\\*\\+,-\\./:;<=>?@\\[\\]\\^_`{|}~]";
-	
-	public static List<Vector> loadVectorFile(String path) throws IOException{
-		BufferedReader br =  new BufferedReader(new FileReader(new File(path)));
-		List<Vector> vectors = new ArrayList<>();
-		while(br.ready()) {
-			vectors.add(stringToVector(br.readLine()));
-		}
-		br.close();
-		return vectors;
-	}
-	
-	private static Vector stringToVector(String stringVector){
-		int classification;
-		HashMap<Integer, Integer> dimensions = new HashMap<>();
-		String splited[] = stringVector.split("\\s|:");
-		classification = Integer.parseInt(splited[0]);
-		try {
-			for(int i = 1; i < splited.length; i+= 2) {
-				if(i < splited.length) {
-					dimensions.put(Integer.parseInt(splited[i]), Integer.parseInt(splited[i+1]));
-				}else {
-					//throws
-				}
-			}
-		}catch(NumberFormatException ex) {
-			//throws
-		}
-		return new Vector(classification, dimensions);
-	}
-	
-	public static Set<String> readFileWordsToSet(final String fileName) {
-		Set<String> set = new HashSet<>();
-		try {
-			//InputStream in = Utils.class.getResourceAsStream(fileName);
-			File f = new File(fileName);			
-			FileReader fr = new FileReader(f);
-			BufferedReader input = new BufferedReader(fr);
-			String line;
-			while((line = input.readLine()) != null) {
-				line = removePunctuation(line.trim().toLowerCase());
-				for(String word: line.split("\\s+")){
-					set.add(word);
-				}
-			}
-			input.close();
-			fr.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			//System.err.println("Error opening file: " + fileName);
-			//System.exit(1989);
-		}
-		
-		
-		return set;
-	}
-		
-	public static String removePunctuation(String text) {
 
-		return text.replaceAll(PUNCTUATION_REGEX, " ");
-	}
-	
-	public static LinkedList<String> readFileLinesProcessed(final String fileName) {
-		LinkedList<String> list = new LinkedList<>();
-		try {
-			//InputStream in = Utils.class.getResourceAsStream(fileName);
-			File f = new File(fileName);			
-			FileReader fr = new FileReader(f);
-			BufferedReader input = new BufferedReader(fr);
-			String line;
-			while((line = input.readLine()) != null) {
-				line = removePunctuation(line.trim().toLowerCase());
-				list.add(line);
-			}
-			input.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			//System.err.println("Error opening file: " + fileName);
-			//System.exit(1989);
-		}
-		
-		
-		return list;
-	}
-	
-	public static LinkedList<String> readFileLines(final String fileName) {
-		LinkedList<String> list = new LinkedList<>();
-		try {
-			//InputStream in = Utils.class.getResourceAsStream(fileName);
-			File f = new File(fileName);			
-			FileReader fr = new FileReader(f);
-			BufferedReader input = new BufferedReader(fr);
-			String line;
-			while((line = input.readLine()) != null) {
-				line = line.trim();
-				list.add(line);
-			}
-			input.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			//System.err.println("Error opening file: " + fileName);
-			//System.exit(1989);
-		}
-		
-		
-		return list;
-	}
+    private static final String PUNCTUATION_REGEX = "[!\"#$%&'()\\*\\+,-\\./:;<=>?@\\[\\]\\^_`{|}~]";
+
+    public static String removePunctuation(String text) {
+
+        return text.replaceAll(PUNCTUATION_REGEX, " ");
+    }
+    
+    private static HashMap<String, Integer> createIndexedUniqueWords(Set<String> uniqueWords){
+        HashMap<String, Integer> map = new HashMap<>();
+        int index = 1;
+        for (String word : uniqueWords) {
+            map.put(word, index);
+            index++;
+        }
+        return map;
+    }
+    
+    public static TrainningSet createVectorsFromDataset(File datasetFile, File scoreFile) throws IOException{
+        /* generate unique words, list of text */
+        List<Integer> scores = Utils.readClassifications(scoreFile);
+        Set<String> uniqueWords = new HashSet<>();
+        List<String> texts = new LinkedList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(datasetFile))) {
+            String line;
+            while(br.ready()){
+                line = removePunctuation(br.readLine().trim().toLowerCase());
+                texts.add(line);
+                uniqueWords.addAll(Arrays.asList(line.split("\\s+")));
+            }
+        }
+        /* generate list of vectors */
+        HashMap<String, Integer> indexedUniqueWords = Utils.createIndexedUniqueWords(uniqueWords);
+        Iterator<String> textIterator = texts.iterator();
+        Iterator<Integer> scoreIterator = scores.iterator();
+        List<Vector> vectors = new LinkedList<>();
+        while(textIterator.hasNext()){
+            String text = textIterator.next();
+            int score = scoreIterator.next();
+            vectors.add(Vector.createVector(text, indexedUniqueWords, score));
+        }
+        return new TrainningSet(indexedUniqueWords, vectors);
+    }
+            
+    public static List<Integer> readClassifications(File scoreFile) throws IOException{
+        List<Integer> classifications = new LinkedList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(scoreFile))) {
+            while(br.ready()){
+                classifications.add(Integer.parseInt(br.readLine()));
+            }
+        }
+        return classifications;
+    }
 }
