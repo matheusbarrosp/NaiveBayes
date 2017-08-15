@@ -103,7 +103,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Treinamento"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Training"));
         jPanel2.setToolTipText("");
 
         lbDatasetPath.setText("Dataset path:");
@@ -195,7 +195,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btCrossValidation, javax.swing.GroupLayout.PREFERRED_SIZE, 133, Short.MAX_VALUE)
+                    .addComponent(btCrossValidation, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
                     .addComponent(btRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -212,7 +212,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Frase"));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Phrase"));
 
         btClassify.setText("Classify");
         btClassify.addActionListener(new java.awt.event.ActionListener() {

@@ -43,7 +43,7 @@ public class CrossValidationWindow extends javax.swing.JDialog {
         tfCrossvalidation.setRows(5);
         jScrollPane1.setViewportView(tfCrossvalidation);
 
-        jButton1.setText("Voltar");
+        jButton1.setText("Back");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
