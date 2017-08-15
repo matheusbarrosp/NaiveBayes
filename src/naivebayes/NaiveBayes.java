@@ -87,14 +87,14 @@ public class NaiveBayes {
 
     public NaiveBayesResult predict(Vector vector) {
         long total = this.posTexts + this.negTexts + this.neuTexts;
-        double pos = ((double) this.posTexts / (double) total);
-        double neu = ((double) this.neuTexts / (double) total);
-        double neg = ((double) this.negTexts / (double) total);
+        double pos = Math.log(((double) this.posTexts / (double) total));
+        double neu = Math.log(((double) this.neuTexts / (double) total));
+        double neg = Math.log(((double) this.negTexts / (double) total));
         for (Entry<Integer, Integer> entry : vector.getDimensions().entrySet()) {
             if (this.map.containsKey(entry.getKey())) {
-                pos *= this.map.get(entry.getKey()).pos;
-                neu *= this.map.get(entry.getKey()).neu;
-                neg *= this.map.get(entry.getKey()).neg;
+                pos +=  Math.log(this.map.get(entry.getKey()).pos);
+                neu += Math.log(this.map.get(entry.getKey()).neu);
+                neg += Math.log(this.map.get(entry.getKey()).neg);
             }
         }
         if (neu >= pos && neu >= neg) {
